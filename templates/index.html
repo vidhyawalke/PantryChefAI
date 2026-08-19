@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme if theme else 'dark' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PantryChef AI - Smart AI Recipe & Meal Planning</title>
+    <meta name="description" content="Generate delicious, healthy recipes from the ingredients in your pantry with AI-powered nutrition tracking and dietary customisation.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Light Theme */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+            --bg-glass-card: rgba(255, 255, 255, 0.92);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-focus: #f59e0b;
+            
+            --primary: #ea580c;
+            --primary-hover: #c2410c;
+            --primary-light: #ffedd5;
+            --primary-glow: rgba(234, 88, 12, 0.25);
+            
+            --secondary: #10b981;
+            --secondary-light: #d1fae5;
+            
+            --accent: #f59e0b;
+            --accent-glow: rgba(245, 158, 11, 0.2);
+            
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+            --card-shadow-hover: 0 20px 30px -10px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --border-radius-sm: 10px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131b2e;
+            --bg-tertiary: #1e293b;
+            --bg-glass: rgba(19, 27, 46, 0.85);
+            --bg-glass-card: rgba(30, 41, 59, 0.7);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #27354f;
+            --border-focus: #f59e0b;
+            
+            --primary: #f97316;
+            --primary-hover: #ea580c;
+            --primary-light: rgba(249, 115, 22, 0.15);
+            --primary-glow: rgba(249, 115, 22, 0.35);
+            
+            --secondary: #10b981;
+            --secondary-light: rgba(16, 185, 129, 0.15);
+            
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+            --card-shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(249, 115, 22, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            width: 100%;
+        }
+
+        /* Navbar */
+        header.navbar {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 14px 0;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f97316, #e11d48);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .brand-logo span {
+            background: linear-gradient(135deg, #f97316, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* Theme Toggle & Buttons */
+        .btn-theme {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-theme:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-tertiary);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .diet-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Flash Messages */
+        .flash-container {
+            margin-top: 20px;
+        }
+
+        .flash-alert {
+            padding: 14px 20px;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .flash-alert.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .flash-alert.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .flash-alert.info, .flash-alert.warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--border-radius-sm);
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #e11d48);
+            color: white;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+            filter: brightness(1.05);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* Auth Screen */
+        .auth-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 120px);
+            padding: 40px 0;
+        }
+
+        .auth-card {
+            background: var(--bg-glass-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 460px;
+            padding: 36px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .auth-header h1 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .auth-tab.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* Main Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 28px;
+            margin: 32px 0 60px;
+        }
+
+        @media (max-width: 960px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-glass-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 28px;
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* Quick Item Pills */
+        .quick-chips-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 22px;
+        }
+
+        .chip-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .chip-pill:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .chip-pill.selected {
+            background: linear-gradient(135deg, var(--primary), #e11d48);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Ingredient Input Rows */
+        .ingredient-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-remove-row {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-remove-row:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .pantry-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Macros Dashboard */
+        .macros-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .macros-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .macro-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: 14px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .macro-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .macro-card.cal::before { background: #f97316; }
+        .macro-card.carb::before { background: #3b82f6; }
+        .macro-card.prot::before { background: #10b981; }
+        .macro-card.fat::before { background: #eab308; }
+
+        .macro-value {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 4px 0;
+        }
+
+        .macro-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Recipe Rendered Card */
+        .recipe-content {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color);
+            padding: 22px;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .recipe-content h3 {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .recipe-content h4 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin: 18px 0 10px;
+            border-left: 3px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        .recipe-content ul, .recipe-content ol {
+            padding-left: 20px;
+            margin-bottom: 14px;
+        }
+
+        .recipe-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Step Checkbox interactive mode */
+        .cooking-step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .cooking-step-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        /* Recipe Actions */
+        .recipe-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .saved-recipe-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: 18px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .saved-recipe-info h4 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .saved-recipe-info p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-glass);
+            padding: 24px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="/" class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>PantryChef<span>AI</span></div>
+            </a>
+
+            <div class="nav-actions">
+                <!-- Theme Toggle -->
+                <form method="POST" action="/" style="display: inline;">
+                    <input type="hidden" name="theme" value="{{ 'light' if theme == 'dark' else 'dark' }}">
+                    <button type="submit" class="btn-theme" title="Toggle Light/Dark Theme">
+                        <i class="fa-solid {{ 'fa-sun' if theme == 'dark' else 'fa-moon' }}"></i>
+                    </button>
+                </form>
+
+                {% if session.get('user') %}
+                    <div class="user-badge">
+                        <div class="user-avatar">{{ full_name[0] if full_name else 'U' }}</div>
+                        <span>{{ full_name }}</span>
+                        <span class="diet-tag">{{ preference if preference and preference != 'none' else 'Omnivore' }}</span>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="toggleModal('saved-recipes-modal')" title="Saved Recipes">
+                        <i class="fa-solid fa-bookmark"></i>
+                        <span>Saved (<span id="saved-count">{{ saved_recipes|length if saved_recipes else 0 }}</span>)</span>
+                    </button>
+
+                    <a href="/logout" class="btn btn-secondary btn-sm" title="Sign Out">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-alert {{ category }}">
+                            <div>
+                                <i class="fa-solid {{ 'fa-check-circle' if category == 'success' else 'fa-circle-exclamation' }}"></i>
+                                <span style="margin-left: 8px;">{{ message }}</span>
+                            </div>
+                            <button onclick="this.parentElement.remove()" style="background:none;border:none;color:inherit;cursor:pointer;">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- PAGE 1: Authentication View (Login / Signup) -->
+        {% if page == 'login' or not session.get('user') %}
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="brand-icon" style="margin: 0 auto 16px; width: 52px; height: 52px; font-size: 1.5rem;">
+                        <i class="fa-solid fa-hat-chef"></i>
+                    </div>
+                    <h1>Welcome to PantryChef AI</h1>
+                    <p>Turn leftover pantry items into gourmet, nutritionally balanced meals</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign In</div>
+                    <div class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create Account</div>
+                </div>
+
+                <!-- Sign In Form -->
+                <form id="form-login" method="POST" action="/">
+                    <div class="form-group">
+                        <label for="login_email"><i class="fa-regular fa-envelope"></i> Email Address</label>
+                        <input type="email" id="login_email" name="login_email" class="form-control" placeholder="chef@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login_password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" id="login_password" name="login_password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Pantry
+                    </button>
+                </form>
+
+                <!-- Sign Up Form -->
+                <form id="form-signup" method="POST" action="/" style="display: none;">
+                    <div class="form-group">
+                        <label for="full_name"><i class="fa-regular fa-user"></i> Full Name</label>
+                        <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Julia Child" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup_email"><i class="fa-regular fa-envelope"></i> Email Address</label>
+                        <input type="email" id="signup_email" name="signup_email" class="form-control" placeholder="julia@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup_password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" id="signup_password" name="signup_password" class="form-control" placeholder="Min. 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preference"><i class="fa-solid fa-leaf"></i> Primary Dietary Preference</label>
+                        <select id="preference" name="preference" class="form-control">
+                            <option value="none">Omnivore (No Restrictions)</option>
+                            <option value="veg">Vegetarian</option>
+                            <option value="vegan">Vegan</option>
+                            <option value="non-veg">Non-Vegetarian / High-Protein</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                        <i class="fa-solid fa-user-plus"></i> Join PantryChef
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- PAGE 2: Main Dashboard View -->
+        {% else %}
+        <div class="dashboard-grid">
+            
+            <!-- Left Column: Pantry Input Studio -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span>What's In Your Pantry?</span>
+                    </div>
+                    <!-- Dietary Quick Switcher -->
+                    <form method="POST" action="/update_preference_route" style="display: inline;">
+                        <select name="preference" onchange="this.form.submit()" class="form-control" style="padding: 4px 8px; font-size: 0.8rem; width: auto;">
+                            <option value="none" {% if preference == 'none' %}selected{% endif %}>🥗 Omnivore</option>
+                            <option value="veg" {% if preference == 'veg' %}selected{% endif %}>🌱 Vegetarian</option>
+                            <option value="vegan" {% if preference == 'vegan' %}selected{% endif %}>🌿 Vegan</option>
+                            <option value="non-veg" {% if preference == 'non-veg' %}selected{% endif %}>🍗 Non-Veg</option>
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Quick Add Staples -->
+                <div class="quick-chips-title"><i class="fa-solid fa-bolt"></i> Quick-Add Popular Staples</div>
+                <div class="quick-chips">
+                    <div class="chip-pill" onclick="quickAddIngredient('Rice', '150', 'g')"><i class="fa-solid fa-plus"></i> Rice</div>
+                    <div class="chip-pill" onclick="quickAddIngredient('Tomatoes', '2', 'count')"><i class="fa-solid fa-plus"></i> Tomatoes</div>
+                    <div class="chip-pill" onclick="quickAddIngredient('Garlic', '3', 'count')"><i class="fa-solid fa-plus"></i> Garlic</div>
+                    <div class="chip-pill" onclick="quickAddIngredient('Olive Oil', '2', 'tbsp')"><i class="fa-solid fa-plus"></i> Olive Oil</div>
+                    <div class="chip-pill" onclick="quickAddIngredient('Spinach', '100', 'g')"><i class="fa-solid fa-plus"></i> Spinach</div>
+                    <div class="chip-pill" onclick="quickAddIngredient('Onion', '1', 'count')"><i class="fa-solid fa-plus"></i> Onion</div>
+                    {% if preference not in ['veg', 'vegan'] %}
+                    <div class="chip-pill" onclick="quickAddIngredient('Chicken Breast', '250', 'g')"><i class="fa-solid fa-plus"></i> Chicken</div>
+                    <div class="chip-pill" onclick="quickAddIngredient('Eggs', '2', 'count')"><i class="fa-solid fa-plus"></i> Eggs</div>
+                    {% endif %}
+                    {% if preference != 'vegan' %}
+                    <div class="chip-pill" onclick="quickAddIngredient('Cheese', '50', 'g')"><i class="fa-solid fa-plus"></i> Cheese</div>
+                    {% endif %}
+                    <div class="chip-pill" onclick="quickAddIngredient('Potatoes', '200', 'g')"><i class="fa-solid fa-plus"></i> Potatoes</div>
+                    <div class="chip-pill" onclick="quickAddIngredient('Broccoli', '150', 'g')"><i class="fa-solid fa-plus"></i> Broccoli</div>
+                </div>
+
+                <!-- Ingredient Form -->
+                <form method="POST" action="/" id="recipe-form">
+                    <input type="hidden" name="generate_recipe" value="1">
+                    
+                    <div id="ingredient-rows-container">
+                        {% if ingredients and ingredients|length > 0 %}
+                            {% for ing in ingredients %}
+                                <div class="ingredient-row" id="row-{{ loop.index0 }}">
+                                    <input type="text" name="ingredient_{{ loop.index0 }}" class="form-control" value="{{ ing.split(' ', 1)[1] if ing.split()|length > 1 else ing }}" placeholder="Ingredient name" required>
+                                    <input type="number" step="any" name="quantity_{{ loop.index0 }}" class="form-control" value="{{ ing.split()[0]|replace('g','')|replace('kg','')|replace('ml','')|replace('l','') if ing.split()|length > 0 else '100' }}" placeholder="Qty" required>
+                                    <select name="unit_{{ loop.index0 }}" class="form-control">
+                                        <option value="g">g</option>
+                                        <option value="kg">kg</option>
+                                        <option value="count" {% if '(count)' in ing %}selected{% endif %}>count</option>
+                                        <option value="ml">ml</option>
+                                        <option value="l">l</option>
+                                        <option value="tbsp">tbsp</option>
+                                        <option value="cup">cup</option>
+                                    </select>
+                                    <button type="button" class="btn-remove-row" onclick="removeIngredientRow('row-{{ loop.index0 }}')"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="ingredient-row" id="row-0">
+                                <input type="text" name="ingredient_0" class="form-control" placeholder="e.g. Rice, Tomatoes, Chicken" value="Rice" required>
+                                <input type="number" step="any" name="quantity_0" class="form-control" placeholder="Qty" value="150" required>
+                                <select name="unit_0" class="form-control">
+                                    <option value="g" selected>g</option>
+                                    <option value="kg">kg</option>
+                                    <option value="count">count</option>
+                                    <option value="ml">ml</option>
+                                    <option value="l">l</option>
+                                    <option value="tbsp">tbsp</option>
+                                    <option value="cup">cup</option>
+                                </select>
+                                <button type="button" class="btn-remove-row" onclick="removeIngredientRow('row-0')"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                            <div class="ingredient-row" id="row-1">
+                                <input type="text" name="ingredient_1" class="form-control" placeholder="e.g. Garlic, Spinach, Olive Oil" value="Tomatoes" required>
+                                <input type="number" step="any" name="quantity_1" class="form-control" placeholder="Qty" value="2" required>
+                                <select name="unit_1" class="form-control">
+                                    <option value="g">g</option>
+                                    <option value="kg">kg</option>
+                                    <option value="count" selected>count</option>
+                                    <option value="ml">ml</option>
+                                    <option value="l">l</option>
+                                    <option value="tbsp">tbsp</option>
+                                    <option value="cup">cup</option>
+                                </select>
+                                <button type="button" class="btn-remove-row" onclick="removeIngredientRow('row-1')"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addIngredientRow()" style="margin-top: 10px; width: 100%;">
+                        <i class="fa-solid fa-plus"></i> Add Another Ingredient
+                    </button>
+
+                    <!-- Recipe Settings -->
+                    <div class="pantry-controls">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="cuisine"><i class="fa-solid fa-globe"></i> Cuisine Style</label>
+                            <select id="cuisine" name="cuisine" class="form-control">
+                                <option value="general" {% if cuisine == 'general' %}selected{% endif %}>🌍 Chef's Choice</option>
+                                <option value="italian" {% if cuisine == 'italian' %}selected{% endif %}>🇮🇹 Italian</option>
+                                <option value="indian" {% if cuisine == 'indian' %}selected{% endif %}>🇮🇳 Indian</option>
+                                <option value="mexican" {% if cuisine == 'mexican' %}selected{% endif %}>🇲🇽 Mexican</option>
+                                <option value="mediterranean" {% if cuisine == 'mediterranean' %}selected{% endif %}>🇬🇷 Mediterranean</option>
+                                <option value="asian" {% if cuisine == 'asian' %}selected{% endif %}>🥢 Asian / Stir-fry</option>
+                                <option value="french" {% if cuisine == 'french' %}selected{% endif %}>🇫🇷 French Bistro</option>
+                                <option value="american" {% if cuisine == 'american' %}selected{% endif %}>🇺🇸 American Homestyle</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="servings"><i class="fa-solid fa-users"></i> Portions / Servings</label>
+                            <input type="number" id="servings" name="servings" class="form-control" min="1" max="12" value="{{ servings if servings else 1 }}">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-generate" class="btn btn-primary" style="width: 100%; margin-top: 24px; padding: 14px;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Recipe & Macros
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: AI Recipe & Nutrition Studio -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-fire-burner"></i>
+                        <span>Chef's Creation</span>
+                    </div>
+                    {% if recipe %}
+                    <span class="diet-tag" style="background: var(--secondary-light); color: var(--secondary);">
+                        <i class="fa-solid fa-check"></i> Generated
+                    </span>
+                    {% endif %}
+                </div>
+
+                {% if recipe %}
+                    <!-- Nutrition & Macros Grid -->
+                    {% if macros %}
+                    <div class="macros-grid">
+                        <div class="macro-card cal">
+                            <div class="macro-label">Total Calories</div>
+                            <div class="macro-value">{{ macros.total_calories|int }} <span style="font-size: 0.75rem; font-weight: normal;">kcal</span></div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">{{ macros.per_serving_calories|int }} kcal/serving</div>
+                        </div>
+                        <div class="macro-card carb">
+                            <div class="macro-label">Carbs</div>
+                            <div class="macro-value">{{ macros.total_carbs|int }}g</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">{{ macros.per_serving_carbs|int }}g/serving</div>
+                        </div>
+                        <div class="macro-card prot">
+                            <div class="macro-label">Protein</div>
+                            <div class="macro-value">{{ macros.total_protein|int }}g</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">{{ macros.per_serving_protein|int }}g/serving</div>
+                        </div>
+                        <div class="macro-card fat">
+                            <div class="macro-label">Fats</div>
+                            <div class="macro-value">{{ macros.total_fat|int }}g</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">{{ macros.per_serving_fat|int }}g/serving</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Formatted Recipe Content -->
+                    <div class="recipe-content" id="recipe-body-content">
+                        <!-- We format lines dynamically with JS for interactive step checkboxes -->
+                        <div id="raw-recipe-text" style="display: none;">{{ recipe }}</div>
+                        <div id="formatted-recipe-container"></div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="recipe-actions">
+                        <form method="POST" action="/" style="display: inline;">
+                            <input type="hidden" name="save_recipe" value="1">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-bookmark"></i> Save Recipe
+                            </button>
+                        </form>
+
+                        <a href="/print_recipe" target="_blank" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-print"></i> Print / PDF Card
+                        </a>
+
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="copyRecipeToClipboard()">
+                            <i class="fa-solid fa-copy"></i> <span id="copy-btn-text">Copy Text</span>
+                        </button>
+                    </div>
+
+                {% else %}
+                    <!-- Empty State Placeholder -->
+                    <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                        <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem; color: var(--primary);">
+                            <i class="fa-solid fa-kitchen-set"></i>
+                        </div>
+                        <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 8px; color: var(--text-primary);">No Recipe Generated Yet</h3>
+                        <p style="max-width: 360px; margin: 0 auto; font-size: 0.95rem;">
+                            Add the ingredients currently in your fridge or pantry on the left and click <strong>Generate AI Recipe</strong> to create your custom meal plan.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Saved Recipes Modal -->
+    <div class="modal-overlay" id="saved-recipes-modal" onclick="if(event.target === this) toggleModal('saved-recipes-modal')">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="card-title">
+                    <i class="fa-solid fa-bookmark"></i>
+                    <span>My Saved Recipes</span>
+                </div>
+                <button onclick="toggleModal('saved-recipes-modal')" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if saved_recipes and saved_recipes|length > 0 %}
+                    {% for item in saved_recipes %}
+                        <div class="saved-recipe-item">
+                            <div class="saved-recipe-info">
+                                <h4>{{ item.title if item.title else 'Saved Recipe #' ~ loop.index }}</h4>
+                                <p>
+                                    <i class="fa-solid fa-utensils"></i> {{ item.cuisine|capitalize if item.cuisine else 'Homestyle' }} |
+                                    <i class="fa-solid fa-users"></i> {{ item.servings }} serving(s)
+                                    {% if item.macros %}
+                                     | <i class="fa-solid fa-fire"></i> {{ item.macros.total_calories|int }} kcal
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <form method="POST" action="/delete_recipe">
+                                    <input type="hidden" name="recipe_index" value="{{ loop.index0 }}">
+                                    <button type="submit" class="btn-remove-row" title="Delete Recipe">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <i class="fa-regular fa-bookmark" style="font-size: 2.5rem; margin-bottom: 12px; color: var(--text-muted);"></i>
+                        <p>You have not saved any recipes yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>PantryChef AI &copy; 2026. Empowered by intelligent AI culinary synthesis & nutritional analytics.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Interactive Handlers -->
+    <script>
+        let rowIndex = {{ ingredients|length if ingredients else 2 }};
+
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('tab-login');
+            const signupTab = document.getElementById('tab-signup');
+            const formLogin = document.getElementById('form-login');
+            const formSignup = document.getElementById('form-signup');
+
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                formLogin.style.display = 'block';
+                formSignup.style.display = 'none';
+            } else {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                formSignup.style.display = 'block';
+                formLogin.style.display = 'none';
+            }
+        }
+
+        function addIngredientRow(name = '', qty = '100', unit = 'g') {
+            const container = document.getElementById('ingredient-rows-container');
+            const rowId = `row-${rowIndex}`;
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'ingredient-row';
+            rowDiv.id = rowId;
+            rowDiv.innerHTML = `
+                <input type="text" name="ingredient_${rowIndex}" class="form-control" placeholder="Ingredient name" value="${name}" required>
+                <input type="number" step="any" name="quantity_${rowIndex}" class="form-control" placeholder="Qty" value="${qty}" required>
+                <select name="unit_${rowIndex}" class="form-control">
+                    <option value="g" ${unit === 'g' ? 'selected' : ''}>g</option>
+                    <option value="kg" ${unit === 'kg' ? 'selected' : ''}>kg</option>
+                    <option value="count" ${unit === 'count' ? 'selected' : ''}>count</option>
+                    <option value="ml" ${unit === 'ml' ? 'selected' : ''}>ml</option>
+                    <option value="l" ${unit === 'l' ? 'selected' : ''}>l</option>
+                    <option value="tbsp" ${unit === 'tbsp' ? 'selected' : ''}>tbsp</option>
+                    <option value="cup" ${unit === 'cup' ? 'selected' : ''}>cup</option>
+                </select>
+                <button type="button" class="btn-remove-row" onclick="removeIngredientRow('${rowId}')"><i class="fa-solid fa-trash-can"></i></button>
+            `;
+            container.appendChild(rowDiv);
+            rowIndex++;
+        }
+
+        function removeIngredientRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) {
+                row.remove();
+            }
+        }
+
+        function quickAddIngredient(name, qty, unit) {
+            addIngredientRow(name, qty, unit);
+        }
+
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.toggle('open');
+            }
+        }
+
+        function copyRecipeToClipboard() {
+            const rawText = document.getElementById('raw-recipe-text');
+            if (rawText) {
+                navigator.clipboard.writeText(rawText.innerText).then(() => {
+                    const btnText = document.getElementById('copy-btn-text');
+                    btnText.innerText = 'Copied!';
+                    setTimeout(() => { btnText.innerText = 'Copy Text'; }, 2000);
+                });
+            }
+        }
+
+        // Format Recipe Text into structured elements with interactive checkboxes
+        document.addEventListener('DOMContentLoaded', () => {
+            const rawEl = document.getElementById('raw-recipe-text');
+            const targetEl = document.getElementById('formatted-recipe-container');
+            if (rawEl && targetEl) {
+                const text = rawEl.innerText;
+                const lines = text.split('\n');
+                let html = '';
+                let inStepSection = false;
+
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return;
+
+                    if (trimmed.startsWith('### ')) {
+                        html += `<h3>${trimmed.replace('### ', '')}</h3>`;
+                    } else if (trimmed.startsWith('#### ')) {
+                        html += `<h4>${trimmed.replace('#### ', '')}</h4>`;
+                        inStepSection = trimmed.toLowerCase().includes('instruction') || trimmed.toLowerCase().includes('step') || trimmed.toLowerCase().includes('cooking');
+                    } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                        html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                            <i class="fa-solid fa-circle-check" style="color:var(--secondary);font-size:0.85rem;"></i>
+                            <span>${trimmed.substring(2)}</span>
+                        </div>`;
+                    } else if (/^\d+\.\s/.test(trimmed)) {
+                        const stepText = trimmed.replace(/^\d+\.\s/, '');
+                        html += `
+                        <div class="cooking-step-item" onclick="this.classList.toggle('completed')">
+                            <input type="checkbox" style="margin-top: 4px; accent-color: var(--secondary); cursor: pointer;" onclick="event.stopPropagation(); this.parentElement.classList.toggle('completed')">
+                            <div>${stepText}</div>
+                        </div>`;
+                    } else {
+                        html += `<p style="margin-bottom: 8px;">${trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
+                    }
+                });
+
+                targetEl.innerHTML = html;
+            }
+        });
+    </script>
+</body>
+</html>
