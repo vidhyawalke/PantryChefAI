@@ -2,105 +2,95 @@
 
 <div align="center">
 
-![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)
+![Python Version](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.40%2B-FF4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-3.0%2B-black.svg?style=for-the-badge&logo=flask&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.0%2B-000000.svg?style=for-the-badge&logo=flask&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C.svg?style=for-the-badge&logo=pytorch&logoColor=white)
-![Transformers](https://img.shields.io/badge/HuggingFace-Transformers-FFD21E.svg?style=for-the-badge&logo=huggingface&logoColor=black)
+![HuggingFace](https://img.shields.io/badge/HuggingFace-Transformers-FFD21E.svg?style=for-the-badge&logo=huggingface&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
 
-**An AI-Powered Recipe Generation & Macro Nutrition Planning Platform**  
-*Built with Python, LLM Integration, Prompt Engineering, Streamlit & Flask*
+### 🍲 Turn leftover pantry ingredients into delicious, chef-crafted meals with AI & real-time macro tracking.
 
-[Core Resume Features](#-project-summary--resume-highlights) • [Architecture](#-system-architecture) • [Prompt Engineering & Validation](#-prompt-engineering--input-validation-architecture) • [Quick Start](#-quick-start--installation) • [Interview Talking Points](#-interview-preparation--talking-points) • [License](#-license)
+[Live Demo](#-getting-started) • [Features](#-key-features) • [How It Works](#-how-it-works) • [Prompt Engineering](#-prompt-engineering--guardrails) • [Installation](#-installation--quick-start) • [Author](#-author)
 
 </div>
 
 ---
 
-## 📌 Project Summary & Resume Highlights
+## 💡 Why PantryChef AI?
 
-> **Resume Specification:**
-> - **Developed an AI recipe generation application using Python, Streamlit, and LLM APIs to create tailored recipes based on user-provided ingredients and dietary preferences.**
-> - **Designed system prompts and input validation logic to enforce structured step-by-step recipe formatting and reliable response parsing.**
+Have you ever opened your refrigerator, stared at a random assortment of ingredients—a handful of spinach, two eggs, some rice, and half an onion—and wondered **"What can I cook with this?"**
 
-**PantryChef AI** is an intelligent zero-waste culinary platform that empowers users to turn random leftover ingredients in their fridge or pantry into gourmet, nutritionally-balanced meals. The application combines **Large Language Model (LLM) Integration** with deterministic **input validation guardrails** and a **macronutrient calculation engine** to deliver structured, delicious recipes tailored to individual dietary constraints (Vegetarian, Vegan, Non-Veg/High-Protein, Omnivore).
+Millions of tons of edible food are wasted every year simply because we struggle to connect leftover pantry staples into a cohesive, delicious meal.
+
+**PantryChef AI** is an intelligent, zero-waste culinary platform built to solve this problem. It takes whatever ingredients you already have, applies your dietary preferences (Vegetarian, Vegan, Non-Veg/High-Protein, Omnivore), and uses state-of-the-art **Large Language Models (LLMs)** and a **macronutrient analytics engine** to generate custom, structured recipes with step-by-step cooking directions and real-time calorie tracking.
 
 ---
 
 ## ✨ Key Features
 
-- 🤖 **Tailored AI Recipe Synthesis**: Connects with LLMs (`Qwen/Qwen2.5-0.5B-Instruct` / LLM APIs) with a fast culinary synthesis fallback to generate structured recipes containing Prep Time, Cook Time, Serving Scaling, and Chef Pro-Tips.
-- 🥗 **Dietary Constraint Enforcement**: Enforces strict dietary guardrails (Vegetarian, Vegan, Non-Vegetarian, Keto) by validating ingredients against comprehensive food restriction lexicons before LLM inference.
-- 📊 **Real-Time Macronutrient Analytics**: Dynamically computes Total Calories (kcal), Carbohydrates (g), Protein (g), Fats (g), and Fiber (g) scaled per serving.
-- 🎯 **Prompt Engineering & Structured Parsing**: Enforces reliable, step-by-step markdown formatting, interactive cooking checklists, and ingredient measurement normalization.
-- 🖥️ **Dual User Interface Options**:
-  - **Streamlit App (`streamlit_app.py`)**: Rapid, interactive data science dashboard with live parameter tuning and instant recipe generation.
-  - **Flask Full-Stack App (`app.py`)**: Full-featured web app with user authentication (salted PBKDF2 hashes), SQLite recipe vault, dark/light theme toggle, and printable PDF cards.
-- 💾 **Personal Recipe Vault**: Stores favorite generated recipes with complete nutritional history in SQLite.
-- 🖨️ **Printer & PDF Ready**: Dedicated print layout optimized for high-resolution recipe cards and kitchen cooking.
+- 🤖 **AI-Powered Recipe Generation**: Connects to `Qwen/Qwen2.5-0.5B-Instruct` and LLM APIs to create complete, realistic recipes with prep time, cook time, and chef's pro-tips.
+- 🥗 **Strict Dietary Guardrails**: Respects dietary preferences (*Vegetarian, Vegan, Non-Vegetarian, Omnivore*) and automatically validates ingredients against restriction databases before generating.
+- 📊 **Real-Time Macronutrient Analytics**: Calculates Total Calories (kcal), Carbohydrates (g), Protein (g), Fats (g), and Fiber (g) scaled dynamically per serving.
+- 🧑‍🍳 **Interactive Cooking Mode**: Features a step-by-step checklist where users can cross off cooking steps as they prepare the dish in the kitchen.
+- 🖥️ **Dual User Interfaces**:
+  - **Streamlit App (`streamlit_app.py`)**: An interactive, rapid data app with instant parameter tuning and prompt engineering inspection.
+  - **Flask Web App (`app.py`)**: A production full-stack web application with secure user authentication, personal recipe vaults, and light/dark theme switching.
+- 💾 **Personal Recipe Vault**: Save your favorite generated recipes and their nutritional history in SQLite.
+- 🖨️ **Printable Recipe & PDF Cards**: Clean, ink-friendly layout optimized for paper printing and PDF export.
+- ⚡ **Zero-Downtime Hybrid Engine**: Features a fast culinary synthesis fallback engine so the app runs smoothly even in offline or CPU-only environments.
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ How It Works
 
 ```mermaid
 flowchart TD
-    subgraph Client Layer
-        A[User Input: Ingredients, Quantities, Dietary Preference, Cuisine, Servings]
-        UI1[Streamlit Interactive App]
-        UI2[Flask Web App + Dark/Light Theme]
+    subgraph 1. User Input
+        A[User Inputs Ingredients & Quantities]
+        B[Dietary Preference: Veg / Vegan / Non-Veg]
+        C[Cuisine & Servings Selection]
     end
 
-    subgraph Input Validation & Guardrails
-        B[Dietary Restriction Validator]
-        C[Unit & Quantity Normalizer]
+    subgraph 2. Input Validation & Guardrails
+        D[Dietary Restriction Filter]
+        E[Unit & Measurement Normalizer]
     end
 
-    subgraph Prompt Engineering Layer
-        D[System Prompt Template]
-        E[Role Definition: Chef & Nutritionist]
-        F[Output Structure Enforcer]
+    subgraph 3. Prompt Engineering
+        F[Role-Based System Prompt]
+        G[Instructional Constraints & Few-Shot Rules]
     end
 
-    subgraph LLM & Synthesis Layer
-        G{Inference Engine}
-        H[Local Qwen2.5-0.5B LLM / GPU]
-        I[LLM APIs]
+    subgraph 4. AI Inference Engine
+        H{Backend Engine}
+        I[Qwen2.5 LLM / Transformers]
         J[Culinary Synthesis Fallback Engine]
     end
 
-    subgraph Nutritional Analytics Engine
-        K[Nutrition Database Lookup]
-        L[Macro Calculation: Calories, Carbs, Protein, Fat, Fiber]
+    subgraph 5. Macro Analytics & Output
+        K[Macronutrient Calculator: Cal / Carb / Prot / Fat]
+        L[Interactive Cooking UI / Streamlit / Flask]
+        M[Save to Vault / Print PDF]
     end
 
-    subgraph Output & Storage Layer
-        M[Interactive Checklist UI]
-        N[SQLite Database: User Vault]
-        O[Printable PDF Recipe Card]
-    end
-
-    A --> UI1 & UI2
-    UI1 & UI2 --> B & C
-    B & C --> D
-    D --> E & F
-    E & F --> G
-    G -->|Transformers| H
-    G -->|API Key| I
-    G -->|Offline / Lightweight| J
-    H & I & J --> M
-    A --> K --> L --> M
-    M --> N & O
+    A & B & C --> D & E
+    D & E --> F & G
+    F & G --> H
+    H -->|GPU / HuggingFace| I
+    H -->|Offline / CPU| J
+    I & J --> L
+    A --> K --> L
+    L --> M
 ```
 
 ---
 
-## 🧠 Prompt Engineering & Input Validation Architecture
+## 🧠 Prompt Engineering & Guardrails
 
-### 1. System Prompt Design
-To guarantee structured step-by-step recipe formatting and eliminate hallucinations, PantryChef AI uses explicit role-based system prompts:
+PantryChef AI implements rigorous prompt engineering to guarantee structured outputs and prevent LLM hallucinations:
 
+### 1. Structured Role-Based System Prompt
 ```text
 <|im_start|>system
 You are PantryChef AI, an expert culinary chef and certified nutritionist.
@@ -118,45 +108,43 @@ Cuisine Style: {cuisine}. Scale for {servings} serving(s).
 <|im_start|>assistant
 ```
 
-### 2. Input Validation & Guardrails Logic
-- **Dietary Constraint Check**: Checks ingredient tokens against sets of non-vegetarian items (`chicken`, `fish`, `beef`, `eggs`, etc.) and dairy items (`cheese`, `milk`, `butter`) when `veg` or `vegan` preferences are active.
-- **Unit Normalization**: Automatically converts units (`g`, `kg`, `ml`, `l`, `count`, `tbsp`, `cup`) into standardized gram weights for accurate macro calculation.
-- **Response Parsing**: Parses markdown headings, checklists, and bullet points into structured UI elements with interactive toggle checkboxes.
+### 2. Input Validation Pipeline
+- **Dietary Filter**: Compares user ingredients against food restriction lexicons. If a user with a Vegetarian profile enters poultry or seafood, the validation layer flags and filters it out before model execution.
+- **Unit Normalization**: Automatically converts units (`g`, `kg`, `ml`, `l`, `count`, `tbsp`, `cup`) into standardized weights for accurate calorie calculation.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Domain | Technologies & Libraries |
-|---|---|
-| **Programming Language** | Python 3.8+ |
-| **LLM & NLP** | HuggingFace Transformers, PyTorch, Qwen2.5-0.5B-Instruct, Prompt Engineering |
-| **Web Frameworks** | Streamlit (Interactive Data App) & Flask (Full-Stack Production App) |
-| **Database & Security** | SQLite3, Werkzeug Security (`generate_password_hash`, `check_password_hash`) |
-| **Frontend UI/UX** | HTML5, Modern CSS3 (Glassmorphism, Dark/Light Themes), JavaScript (ES6+), FontAwesome 6 |
+- **Core Backend**: Python 3.8+
+- **AI & NLP**: HuggingFace Transformers, PyTorch, Qwen2.5-0.5B-Instruct, Prompt Engineering
+- **Web Frameworks**: Streamlit & Flask
+- **Database & Security**: SQLite3, Werkzeug Security (`pbkdf2:sha256` password hashing)
+- **Frontend & Design**: HTML5, Modern CSS3 (Glassmorphism, Dark/Light Themes), JavaScript (ES6+), FontAwesome 6
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🚀 Installation & Quick Start
 
 ### Prerequisites
-- Python 3.8 or higher installed on your machine.
-- `pip` package manager.
+- **Python 3.8+** installed on your system
+- **pip** package manager
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/vidzz22/PantryChefAI.git
+git clone https://github.com/vidhyawalke/PantryChefAI.git
 cd PantryChefAI
 ```
 
-### 2. Create and Activate a Virtual Environment
-**On Windows (PowerShell):**
+### 2. Set Up a Virtual Environment
+
+**Windows (PowerShell):**
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-**On macOS / Linux:**
+**macOS / Linux:**
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -167,19 +155,19 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Running the Application
+### 4. Launch the Application
 
-#### Option A: Run the Streamlit Interactive App
+#### Option A: Run the Streamlit Interactive Dashboard
 ```bash
 streamlit run streamlit_app.py
 ```
-👉 Opens at `http://localhost:8501`
+👉 Open your browser at: **`http://localhost:8501`**
 
 #### Option B: Run the Flask Full-Stack Web App
 ```bash
 python app.py
 ```
-👉 Opens at `http://localhost:5000`
+👉 Open your browser at: **`http://localhost:5000`**
 
 ---
 
@@ -187,14 +175,14 @@ python app.py
 
 ```text
 PantryChefAI/
-├── streamlit_app.py        # Streamlit web application with live parameter tuning
-├── app.py                  # Flask web application, auth, routes & SQLite logic
-├── model_backend.py        # Qwen2.5 LLM integration & culinary synthesis fallback
+├── streamlit_app.py        # Streamlit interactive application with live parameter tuning
+├── app.py                  # Flask web app with user authentication, routes & SQLite logic
+├── model_backend.py        # HuggingFace Qwen2.5 LLM integration & culinary synthesis fallback
 ├── model.py                # Nutrition database & macronutrient calculation algorithms
 ├── database.db             # SQLite database storing users, preferences & saved recipes
 ├── requirements.txt        # Python dependency manifest
 ├── .gitignore              # Git ignore configuration
-├── README.md               # Comprehensive documentation and interview guide
+├── README.md               # Public project documentation
 └── templates/
     ├── index.html          # Responsive Flask UI (Auth, Pantry Studio, Recipe Dashboard)
     └── print_recipe.html   # Clean recipe card template for printing and PDF export
@@ -202,32 +190,23 @@ PantryChefAI/
 
 ---
 
-## 🎯 Interview Preparation & Talking Points
+## 🔒 Security & Privacy
 
-Here is a quick cheat-sheet for discussing **PantryChef AI** during technical interviews:
-
-### 1. Elevator Pitch (30 Seconds)
-> *"PantryChef AI is an AI-powered culinary and meal-planning application built in Python using Streamlit, Flask, and Large Language Models. It solves food waste by allowing users to enter whatever ingredients they have in their fridge, validates dietary constraints like vegetarian or vegan, and uses tailored system prompts to generate structured step-by-step recipes with real-time calorie and macronutrient breakdowns."*
-
-### 2. Why Prompt Engineering & System Prompts?
-> *"LLMs without constraints can hallucinate ingredients that the user doesn't own or produce messy unformatted outputs. I designed system prompts with strict behavioral instructions (`<|im_start|>system...`), few-shot formatting rules, and parameter interpolation (servings, cuisine, dietary flags) to force the model into outputting standardized recipes with exact prep/cook times and numbered instructions."*
-
-### 3. How Input Validation & Guardrails Work
-> *"Before passing user inputs to the model, the app validates every ingredient against dietary restriction sets. For example, if a user has a 'Vegetarian' profile but enters 'chicken' or 'fish', the input validation pipeline flags or removes the invalid ingredient to prevent dietary violations. It also parses quantities and units (`g`, `kg`, `count`) into standard weights for accurate macronutrient calculation."*
-
-### 4. Robustness & Fallback Architecture
-> *"To ensure high availability and responsiveness even in offline or low-RAM CPU environments, I implemented a hybrid backend: if the local HuggingFace Qwen2.5 LLM is downloading or unavailable, the system automatically falls back to an intelligent culinary synthesis engine, ensuring zero server crashes and instant recipe generation."*
+- **Password Encryption**: Employs PBKDF2/SHA-256 salted password hashing.
+- **Safe Serialization**: Recipes and user data are stored and parsed using safe `json` operations.
+- **Session Protection**: Flask session cookies are configured with `HttpOnly` and `SameSite=Lax`.
 
 ---
 
-## 🔒 Security & Data Integrity
+## 👩‍💻 Author
 
-- **Password Encryption**: Employs PBKDF2/SHA-256 salted password hashing via Werkzeug with automatic migration for legacy credentials.
-- **Safe JSON Storage**: Recipe items are serialized with standard `json` instead of dangerous `eval()`.
-- **Session Protection**: Hardened session cookies configured with `HttpOnly` and `SameSite=Lax`.
+**Vidhya Walke**  
+- GitHub: [@vidhyawalke](https://github.com/vidhyawalke)  
+- LinkedIn: [Vidhya Walke](https://www.linkedin.com)  
+- Email: vidhya.walke.official@gmail.com  
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License** - free for academic, personal, and commercial exploration.
+This project is licensed under the **MIT License** — feel free to use, modify, and distribute it for personal or commercial projects.
